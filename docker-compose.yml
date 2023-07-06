@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: opentelemetry-collector
+    command: --config=/etc/otel-collector-config.yaml
+    ports:
+    - "4317:4317"
+    - "4318:4318"
+    volumes:
+    - "./config/collector.yaml:/etc/otel-collector-config.yaml"
+    env_file:
+      - .env
+    environment:
+      DD_API_KEY: ${DD_API_KEY}
+
+  postgres:
+    image: postgres:13.9
+    container_name: postgres
+    command: -c max_connections=5000
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: kong
+
+  kong:
+    # Only Enterprise version is supported to propagate the DataDog tracing headers
+    image: kong/kong-gateway:3.3.1.0
+    container_name: kong-gateway
+    command: sh -c "kong migrations bootstrap && kong start"
+    ports:
+    - "8000:8000"
+    - "8001:8001"
+    - "8002:8002"
+    env_file:
+      - .env
+    environment:
+      KONG_DATABASE: postgres
+      KONG_LOG_LEVEL: debug
+      KONG_PG_HOST: postgres
+      KONG_PG_PASSWORD: ${POSTGRES_PASSWORD}
+      KONG_PG_USER: kong
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_GUI_URL: http://localhost:8002
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_TRACING_INSTRUMENTATIONS: all
+      KONG_TRACING_SAMPLING_RATE: 1.0
+      KONG_ROUTER_FLAVOR: expressions
+    restart: always
+    depends_on:
+    - postgres
