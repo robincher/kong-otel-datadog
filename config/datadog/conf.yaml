@@ -1,0 +1,5 @@
+logs:
+- type: tcp
+  port: 10518
+  service: "ai-gateway-demo"
+  source: "kong_tcp_logs"

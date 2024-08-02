@@ -45,7 +45,7 @@ docker-compose down
 
 ## Configuration 
 
-### Create Demo Service and Route
+### Create Demo Service and Route for expression route
 
 ```
 http :8001/services url=https://mockbin.org/request name=ot-demo
@@ -75,8 +75,7 @@ You should see the trace coming in your DataDog dashboard
 
 ![dashboard](./assets/dd-screen.png)
 
-
 ## References
-
 1. [Kong Open Telemetry Plugin](https://docs.konghq.com/hub/kong-inc/opentelemetry/)
-2. [DataDog OTEL Collector Set-up](https://docs.datadoghq.com/opentelemetry/otel_collector_datadog_exporter/?tab=onahost/)
+2. [Kong DataDog Plugin](https://docs.konghq.com/hub/kong-inc/datadog/)
+3. [DataDog OTEL Collector Set-up](https://docs.datadoghq.com/opentelemetry/otel_collector_datadog_exporter/?tab=onahost/)
