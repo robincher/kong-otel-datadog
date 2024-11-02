@@ -1,6 +1,7 @@
 version: '3.9'
 
 services:
+
   otelcol:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: opentelemetry-collector
@@ -40,7 +41,7 @@ services:
 
   kong:
     # Only Enterprise version is supported to propagate the DataDog tracing headers
-    image: kong/kong-gateway:3.7.1.2
+    image: kong/kong-gateway:3.8.0.0
     container_name: kong-gateway
     command: sh -c "kong migrations bootstrap && kong start"
     ports:

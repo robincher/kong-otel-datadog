@@ -52,17 +52,30 @@ exporters:
       key: ${DD_API_KEY}
       fail_on_invalid_key: true
 
+connectors:
+  spanmetrics:
+    dimensions:
+      - name: http.method
+        default: GET
+      - name: http.status_code
+      - name: http.route
+    exclude_dimensions:
+      - status.code
+    metrics_flush_interval: 15s
+    histogram:
+      disable: false
+
 service:
   pipelines:
     metrics:
-      receivers: [hostmetrics, prometheus, otlp]
+      receivers: [spanmetrics,hostmetrics, prometheus, otlp]
       processors: [batch]
       exporters: [datadog]
     traces:
       receivers: [otlp]
       processors: [batch]
+      exporters: [datadog,spanmetrics]
+    logs:
+      receivers: [otlp, filelog]
+      processors: [batch]
       exporters: [datadog]
-    # logs:
-    #   receivers: [otlp, filelog]
-    #   processors: [batch]
-    #   exporters: [datadog]
